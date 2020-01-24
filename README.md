@@ -60,6 +60,7 @@ minikube stop # Stops minikube
 docker ps # Show running containers
 
 docker container stop $CONTAINER_ID # Stop given container by id
+# Ex: docker container stop 23kda2135
 
 docker container run -p $FROM_PORT:$TO_PORT -d $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_RELEASE
 # Ex: docker container run -p 8080:80 -d richardchesterwood/k8s-fleetman-webapp-angular:release0-5
@@ -70,6 +71,8 @@ $SERVICE_NAME service restart # Restarts given service
 # Ex: docker service restart
 
 kubectl describe pod $POD_NAME # Describers status of given pod by name
+# Ex: kubectl describe pod webapp
 
 kubectl -it exec $POD_NAME sh # Executes the terminal inside given pod by name
+# Ex: kubectl -it exec webapp sh
 ```
