@@ -1,7 +1,7 @@
 # k8s-microservices
 A simple example of microservices architecture using kubernetes
 
-## How to work locallly
+## How to run locally
 You'll need to install **Minikube**, **Docker**, **VirtualBox** and **Kubernetes CLI**.
 
 After installing the needed apps, do the following:
