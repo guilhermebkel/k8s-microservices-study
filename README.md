@@ -96,4 +96,9 @@ kubectl get pods --show-labels # Gets pods and labels
 kubectl get pods --show-labels -l $LABEL_NAME=$LABEL_VALUE # Gets pods with the given label
 # Ex: kubectl get pods --show-label -l release=0
 
+kubectl delete svc $SERVICE_NAME # Deletes a service using its name
+# Ex: kubectl delete svc fleetman-webapp
+
+kubectl delete pod $POD_NAME # Deletes a pod using its name
+# Ex: kubectl delete pod webapp-release-0-5
 ```
