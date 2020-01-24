@@ -80,9 +80,20 @@ systemctl status docker # Status of current docker service running on computer
 $SERVICE_NAME service restart # Restarts given service
 # Ex: docker service restart
 
-kubectl describe pod $POD_NAME # Describers status of given pod by name
+kubectl describe pod $POD_NAME # Describes status of given pod by name
 # Ex: kubectl describe pod webapp
+
+kubectl describe service $SERVICE_NAME # Describes status of given service name
+# Ex: kubectl describe service fleetman-webapp
 
 kubectl -it exec $POD_NAME sh # Executes the terminal inside given pod by name
 # Ex: kubectl -it exec webapp sh
+
+kubectl get pods # Gets pods
+
+kubectl get pods --show-labels # Gets pods and labels
+
+kubectl get pods --show-labels -l $LABEL_NAME=$LABEL_VALUE # Gets pods with the given label
+# Ex: kubectl get pods --show-label -l release=0
+
 ```
