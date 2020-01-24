@@ -5,7 +5,7 @@ metadata:
   labels:
     # Must match the selector of service
     app: webapp
-    release: 0
+    release: "0"
 spec:
   containers:
   # Specifies the container to use inside this pod
@@ -20,7 +20,7 @@ spec:
     name: webapp-release-0-5
     labels:
       app: webapp
-      release: 0-5
+      release: "0-5"
   spec:
     containers:
     - name: webapp
