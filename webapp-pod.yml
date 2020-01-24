@@ -2,7 +2,11 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: webapp
+  labels:
+    # Must match the selector of service
+    app: webapp
 spec:
   containers:
+  # Specifies the container to use inside this pod
   - name: webapp
     image: richardchesterwood/k8s-fleetman-webapp-angular:release0
