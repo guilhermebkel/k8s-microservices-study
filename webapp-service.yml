@@ -6,6 +6,7 @@ spec:
   selector:
     # Must match the label of pod
     app: webapp
+    release: 0
   ports:
     # Exposes the pod to minikube_ip:30080
     - name: http

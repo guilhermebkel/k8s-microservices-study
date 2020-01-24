@@ -47,6 +47,16 @@ kubectl apply -f $FILE_NAME
 kubectl get all
 ```
 
+## Zero down time deployment
+The basic concept is:
+1. You have a running Pod [1] and Service.
+2. You deploy a new Pod [2] with a new label.
+3. The new Pod [2] started running.
+4. Change the selector of Service to point at the label of the new Pod [2].
+
+And you're done! The Service will select the new Pod to expose on internet.
+
+
 ## Useful commands
 ```sh
 minikube status # Show status of minikube
