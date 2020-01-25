@@ -56,6 +56,15 @@ The basic concept is:
 
 And you're done! The Service will select the new Pod to expose on internet.
 
+## How replica set works
+You can have a maximum number of pods running at the same time using a single configuration.
+
+Besides, if one of the pods goes down, the replica set starts a new one in order to reach the maximum pods you specified.
+
+## How deployment works
+We use the Deployment to manage our replica sets.
+
+Basically, after applying a change to a Deployment, it will initialize a new replica set and, after it is ready, the old one goes down automatically.
 
 ## Useful commands
 ```sh
@@ -83,6 +92,9 @@ $SERVICE_NAME service restart # Restarts given service
 kubectl describe pod $POD_NAME # Describes status of given pod by name
 # Ex: kubectl describe pod webapp
 
+kubectl describe replicaset $REPLICASET_NAME # Describes status of given replicaset name
+# Ex: kubectl describe replicaset webapp
+
 kubectl describe service $SERVICE_NAME # Describes status of given service name
 # Ex: kubectl describe service fleetman-webapp
 
@@ -101,4 +113,7 @@ kubectl delete svc $SERVICE_NAME # Deletes a service using its name
 
 kubectl delete pod $POD_NAME # Deletes a pod using its name
 # Ex: kubectl delete pod webapp-release-0-5
+
+kubectl rollout status deploy $DEPLOYMENT_NAME # Shows a info about the current deployment running
+# Ex: kubectl rollout status deploy webapp
 ```
