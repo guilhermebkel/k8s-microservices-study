@@ -66,6 +66,9 @@ We use the Deployment to manage our replica sets.
 
 Basically, after applying a change to a Deployment, it will initialize a new replica set and, after it is ready, the old one goes down automatically.
 
+# Service discovery and communication between pods
+In order to communicate pods, we can not just use the IP of pods, since it gets random values everytime it restarts. So in order to achieve it, we need to use a Kubernetes Service called **kube-dns** - this service has all key pairs with ip and label of current running pods.
+
 ## Useful commands
 ```sh
 minikube status # Show status of minikube
@@ -116,4 +119,7 @@ kubectl delete pod $POD_NAME # Deletes a pod using its name
 
 kubectl rollout status deploy $DEPLOYMENT_NAME # Shows a info about the current deployment running
 # Ex: kubectl rollout status deploy webapp
+
+nslookup $SERVICE_NAME_OR_POD_NAME # Gets the IP Address for the given ip/service name, must be used with the sh of the pod/service
+# Ex: nslookup database
 ```
