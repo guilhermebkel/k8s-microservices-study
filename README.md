@@ -122,4 +122,7 @@ kubectl rollout status deploy $DEPLOYMENT_NAME # Shows a info about the current 
 
 nslookup $SERVICE_NAME_OR_POD_NAME # Gets the IP Address for the given ip/service name, must be used with the sh of the pod/service
 # Ex: nslookup database
+
+kubectl delete -f $FILES_PATH # Deletes kubernetes resources based on files of the given path
+# Ex: kubectl delete -f .
 ```
