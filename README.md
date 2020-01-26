@@ -1,23 +1,58 @@
 # k8s-microservices
-A simple example of microservices architecture using kubernetes
+A simple example of microservices architecture using kubernetes.
+
+It is a shipping tracker, composed by:
+- Webapp ```(Angular and Spring)```
+- Message Queue ```(ActiveMQ)```
+- Position Tracker ```(Java)```
+- Position Simulator ```(Java)```
+- API Gateway ```(Java)```
+- Persistent Storage ```(MongoDB)```
+
+All the services/resources above run inside a kubernetes cluster.
+
+The files can be found inside the **example** folder.
+
+## Summary
+
+- [ How to run locally ](#how-to-run-locally)
+- [ How it works ](#how-it-works)
+- [ How to apply changes ](#how-to-apply-changes)
+- [ How to see status ](#how-to-see-status)
+- [ Zero down time deployment ](#zero-down-time-deployment)
+- [ How replica set works ](#how-replica-set-works)
+- [ Service discovery and communication between pods ](#service-discovery-and-communication-between-pods)
+- [ How persistent volume works ](#how-persistent-volume-works)
+- [ Useful commands ](#useful-commands)
+
+<a name="how-to-run-locally"></a>
 
 ## How to run locally
 You'll need to install **Minikube**, **Docker**, **VirtualBox** and **Kubernetes CLI**.
 
 After installing the needed apps, do the following:
 
-- Start minikube:
+1. Start minikube
 ```sh
-minikube start --vm-driver=virtualbox
+minikube start --vm-driver=virtualbox --memory 4096
 
 # After using this command you can use only minikube start to make it to work next time
 ```
 
-- Link your Docker CLI with minikube:
+2. Link your Docker CLI with minikube
 ```sh
-minikube docker-env # Shows the needed envs to config (manually)
 eval $(minikube docker-env) # Automatically gets docker configured for you 
 ```
+
+3. Bootstrap all the microservices and resources in your kubernetes local cluster
+```sh
+kubectl apply -f ./example/workload.yml
+kubectl apply -f ./example/services.yml
+kubectl apply -f ./example/mongo-stack.yml
+kubectl apply -f ./example/storage.yml
+```
+
+<a name="how-it-works"></a>
 
 ## How it works
 Basically in Kubernetes we use the concept of Pod (that's like VM which you can run multiple containers inside).
@@ -33,6 +68,8 @@ Example:
 ./webapp-service.yml
 ```
 
+<a name="how-to-apply-changes"></a>
+
 ## How to apply changes
 ```sh
 kubectl apply -f $FILE_NAME
@@ -42,10 +79,14 @@ kubectl apply -f $FILE_NAME
 # kubectl apply -f webapp-service.yml
 ```
 
+<a name="how-to-see-status"></a>
+
 ## How to see status
 ```sh
 kubectl get all
 ```
+
+<a name="zero-down-time-deployment"></a>
 
 ## Zero down time deployment
 The basic concept is:
@@ -56,22 +97,39 @@ The basic concept is:
 
 And you're done! The Service will select the new Pod to expose on internet.
 
+<a name="how-replica-set-works"></a>
+
 ## How replica set works
 You can have a maximum number of pods running at the same time using a single configuration.
 
 Besides, if one of the pods goes down, the replica set starts a new one in order to reach the maximum pods you specified.
+
+<a name="how-deployment-works"></a>
 
 ## How deployment works
 We use the Deployment to manage our replica sets.
 
 Basically, after applying a change to a Deployment, it will initialize a new replica set and, after it is ready, the old one goes down automatically.
 
-# Service discovery and communication between pods
+<a name="service-discovery-and-communication-between-pods"></a>
+
+## Service discovery and communication between pods
 In order to communicate pods, we can not just use the IP of pods, since it gets random values everytime it restarts. So in order to achieve it, we need to use a Kubernetes Service called **kube-dns** - this service has all key pairs with ip and label of current running pods.
 
 So, if we have a Pod called **queue** and he has its own Service with **ClusterIP** type it will be accessible inside the **VM** by its label name: **queue**.
 
 Besides, if it has a Service with **NodeType** type it will be accessible outside the **VM** using the **Kubernetes IP** and the **Port** that was defined on its service.
+
+<a name="how-persistent-volume-works"></a>
+
+## How persistent volume works
+If we create a pod that needs to save data (per example, a mongodb pod) we need to specify in its config file a option called **volumeMounts** and **volumes**, because, if we don't do that, the data will be saved on the container and, if it dies, the data dies with it.
+
+With a persistent volume we can keep the data safe on the needed folder while making sure it will not die if the pod dies.
+
+In order to make it scalable, we can create another file only to config the storage that will be used by the pod (Ex: [PodConfig](example/mongo-stack.yml) and [StorageConfig](example/storage.yml)).
+
+<a name="useful-commands"></a>
 
 ## Useful commands
 ```sh
