@@ -125,4 +125,7 @@ nslookup $SERVICE_NAME_OR_POD_NAME # Gets the IP Address for the given ip/servic
 
 kubectl delete -f $FILES_PATH # Deletes kubernetes resources based on files of the given path
 # Ex: kubectl delete -f .
+
+kubectl logs $RESOURCE_NAME # Shows the logs of the given resource name, useful to debug
+# Ex: kubectl logs queue
 ```
