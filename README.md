@@ -69,6 +69,10 @@ Basically, after applying a change to a Deployment, it will initialize a new rep
 # Service discovery and communication between pods
 In order to communicate pods, we can not just use the IP of pods, since it gets random values everytime it restarts. So in order to achieve it, we need to use a Kubernetes Service called **kube-dns** - this service has all key pairs with ip and label of current running pods.
 
+So, if we have a Pod called **queue** and he has its own Service with **ClusterIP** type it will be accessible inside the **VM** by its label name: **queue**.
+
+Besides, if it has a Service with **NodeType** type it will be accessible outside the **VM** using the **Kubernetes IP** and the **Port** that was defined on its service.
+
 ## Useful commands
 ```sh
 minikube status # Show status of minikube
