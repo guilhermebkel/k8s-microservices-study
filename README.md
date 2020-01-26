@@ -11,7 +11,7 @@ It is a shipping tracker, composed by:
 
 All the services/resources above run inside a kubernetes cluster.
 
-The files can be found inside the **example** folder.
+All the files used to config the microservices system can be found inside the **example** folder.
 
 ## Summary
 
