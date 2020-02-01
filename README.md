@@ -16,6 +16,7 @@ All the files used to config the microservices system can be found inside the **
 ## Summary
 
 - [ How to run locally ](#how-to-run-locally)
+- [ How to run on production ](#how-to-run-on-production)
 - [ How it works ](#how-it-works)
 - [ How to apply changes ](#how-to-apply-changes)
 - [ How to see status ](#how-to-see-status)
@@ -33,7 +34,7 @@ All the files used to config the microservices system can be found inside the **
 <a name="how-to-run-locally"></a>
 
 ## How to run locally
-You'll need to install **Minikube**, **Docker**, **VirtualBox** and **Kubernetes CLI**.
+You'll need to install **Minikube**, **Docker**, **VirtualBox** and **Kubectl**.
 
 After installing the needed apps, do the following:
 
@@ -56,6 +57,37 @@ kubectl apply -f ./example/services.yml
 kubectl apply -f ./example/mongo-stack.yml
 kubectl apply -f ./example/storage.yml
 ```
+
+<a name="how-to-run-on-production"></a>
+
+## How to run on production
+You'll need a **EC2 Instance**, **IAM Credentials**, **S3 Bucket**, **Kops** and **Kubectl**.
+
+Follow the steps bellow to get your kubernetes cluster ready on AWS:
+
+1. Create a EC2 Instance
+
+2. Get into the instance
+
+3. Install Kops and the Kubectl
+
+4. Create a IAM User with ```AmazonEC2FullAccess, AmazonRoute53FullAccess, AmazonS3FullAccess, IAMFullAccess, AmazonVPCFullAccess``` permissions
+
+5. Configure the IAM User on the EC2 Instance
+
+6. Create a S3 Bucket to use as cluster storage
+
+7. Config the local environmental (name and bucket) on the EC2 Instance
+
+8. Create the cluster configuration
+
+9. Customize the cluster configuration (optional)
+
+10. Start the cluster
+
+11. Start the resources using ```kubectl apply``` on .yml files
+
+The steps **5, 7, 8, 9, 10, 11** are covered on [Getting Started - KOPS](https://github.com/kubernetes/kops/blob/master/docs/getting_started/aws.md#creating-your-first-cluster).
 
 <a name="how-it-works"></a>
 
