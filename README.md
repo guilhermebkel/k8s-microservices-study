@@ -23,6 +23,11 @@ All the files used to config the microservices system can be found inside the **
 - [ How replica set works ](#how-replica-set-works)
 - [ Service discovery and communication between pods ](#service-discovery-and-communication-between-pods)
 - [ How persistent volume works ](#how-persistent-volume-works)
+- [ How to get into EC2 Instance ](#how-to-get-into-ec2-instance)
+- [ How to install KOPS on EC2 Instance ](#how-to-install-kops-on-ec2-instance)
+- [ How to install KUBECTL on EC2 Instance ](#how-to-install-kubectl-on-ec2-instance)
+- [ Permissions KOPS user needs from AWS ](#permissions-kops-user-needs-from-aws)
+- [ Using nano editor with KOPS ](#using-nano-editor-with-kops)
 - [ Useful commands ](#useful-commands)
 
 <a name="how-to-run-locally"></a>
@@ -129,6 +134,58 @@ With a persistent volume we can keep the data safe on the needed folder while ma
 
 In order to make it scalable, we can create another file only to config the storage that will be used by the pod (Ex: [PodConfig](example/mongo-stack.yml) and [StorageConfig](example/storage.yml)).
 
+<a name="how-to-get-into-ec2-instance"></a>
+
+## How to get into EC2 Instance
+In order to get into a ec2 instance, you'll need to create a new one, get a key pair and run the following commands
+```sh
+ssh -i $KEY_PAIR_FILE_NAME.pem ec2-user@$EC2_INSTANCE_IP
+
+# Use the command below if you have permission issues when doing the command above
+chmod go-rwx $KEY_PAIR_FILE_NAME.pem
+```
+
+<a name="how-to-install-kops-on-ec2-instance"></a>
+
+## How to install KOPS on EC2 Instance
+```ssh
+curl -Lo kops https://github.com/kubernetes/kops/releases/download/$(curl -s https://api.github.com/repos/kubernetes/kops/releases/latest | grep tag_name | cut -d '"' -f 4)/kops-linux-amd64
+
+chmod +x ./kops
+
+sudo mv ./kops /usr/local/bin/
+```
+
+<a name="how-to-install-kubectl-on-ec2-instance"></a>
+
+## How to install KUBECTL on EC2 Instance
+```ssh
+curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+
+chmod +x ./kubectl
+
+sudo mv ./kubectl /usr/local/bin/kubectl
+```
+
+<a name="permissions-kops-user-needs-from-aws"></a>
+
+## Permissions KOPS user needs from AWS
+```
+AmazonEC2FullAccess
+AmazonRoute53FullAccess
+AmazonS3FullAccess
+IAMFullAccess
+AmazonVPCFullAccess
+```
+
+<a name="using-nano-editor-with-kops"></a>
+
+## Using nano editor with KOPS
+```sh
+echo $EDITOR
+export EDITOR=nano
+```
+
 <a name="useful-commands"></a>
 
 ## Useful commands
@@ -190,4 +247,14 @@ kubectl delete -f $FILES_PATH # Deletes kubernetes resources based on files of t
 
 kubectl logs $RESOURCE_NAME # Shows the logs of the given resource name, useful to debug
 # Ex: kubectl logs queue
+
+kubectl get pods -o wide # Shows pods and node ips
+
+kops update cluster ${NAME} --yes # Deploys the cluster with the configurations you've made
+
+kops delete cluster --name ${NAME} --yes # Deletes the cluster
+
+kops edit cluster ${NAME} # Edits the default cluster configurations
+
+kops get ig --name ${NAME} # Shows the current configuration of cluster
 ```
