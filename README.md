@@ -34,8 +34,8 @@ All the files used to config the microservices system can be found inside the **
 - [ Using nano editor with KOPS ](#using-nano-editor-with-kops)
 - [ How to install Prometheus and Grafana on EC2 Instance ](#how-to-install-prometheus-and-grafana-on-ec2-instance)
 - [ How to use the AlertManager with Slack ](#how-to-use-the-alertmanager-with-slack)
-- [ Useful commands ](#useful-commands)
 - [ Helping Prometheus to verify ETCD service ](#helping-prometheus-to-verify-etcd-service)
+- [ Useful commands ](#useful-commands)
 
 <a name="how-to-run-locally"></a>
 
