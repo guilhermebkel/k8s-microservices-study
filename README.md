@@ -250,7 +250,7 @@ kubectl create secret generic prometheus-alertmanager --from-file=alertmanager.y
 <a name="helping-prometheus-to-verify-etcd-service"></a>
 
 ## Helping Prometheus to verify ETCD service
-Since the default gateway on AWS is configured such a way prometheus can not accesses ports 4001 and 4002, we need to add this ports manually with the help of the following steps:
+Since the default gateway on AWS is configured such a way prometheus can not access ports 4001 and 4002, we need to add this ports manually with the help of the following steps:
 
 1. Go to ```Security Groups```
 
