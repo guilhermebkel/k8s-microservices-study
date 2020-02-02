@@ -8,6 +8,11 @@ It is a shipping tracker, composed by:
 - Position Simulator ```(Java)```
 - API Gateway ```(Java)```
 - Persistent Storage ```(MongoDB)```
+- Logging ```(Fluentd)```
+- Log Storing ```(ElasticSearch)```
+- Log Visualization ```(Kibana)```
+- Monitoring ```(Prometheus)```
+- Monitoring Visualization ```(Grafana)```
 
 All the services/resources above run inside a kubernetes cluster.
 
@@ -25,10 +30,8 @@ All the files used to config the microservices system can be found inside the **
 - [ Service discovery and communication between pods ](#service-discovery-and-communication-between-pods)
 - [ How persistent volume works ](#how-persistent-volume-works)
 - [ How to get into EC2 Instance ](#how-to-get-into-ec2-instance)
-- [ How to install KOPS on EC2 Instance ](#how-to-install-kops-on-ec2-instance)
-- [ How to install KUBECTL on EC2 Instance ](#how-to-install-kubectl-on-ec2-instance)
-- [ Permissions KOPS user needs from AWS ](#permissions-kops-user-needs-from-aws)
 - [ Using nano editor with KOPS ](#using-nano-editor-with-kops)
+- [ How to install Prometheus and Grafana on EC2 Instance ](#how-to-install-prometheus-and-grafana-on-ec2-instance)
 - [ Useful commands ](#useful-commands)
 
 <a name="how-to-run-locally"></a>
@@ -52,10 +55,7 @@ eval $(minikube docker-env) # Automatically gets docker configured for you
 
 3. Bootstrap all the microservices and resources in your kubernetes local cluster
 ```sh
-kubectl apply -f ./example/workload.yml
-kubectl apply -f ./example/services.yml
-kubectl apply -f ./example/mongo-stack.yml
-kubectl apply -f ./example/storage.yml
+kubectl apply -f ./example/dev/
 ```
 
 <a name="how-to-run-on-production"></a>
@@ -69,7 +69,7 @@ Follow the steps bellow to get your kubernetes cluster ready on AWS:
 
 2. Get into the instance
 
-3. Install Kops and the Kubectl
+3. Install [Kops](https://github.com/kubernetes/kops) and the [Kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 
 4. Create a IAM User with ```AmazonEC2FullAccess, AmazonRoute53FullAccess, AmazonS3FullAccess, IAMFullAccess, AmazonVPCFullAccess``` permissions
 
@@ -77,7 +77,7 @@ Follow the steps bellow to get your kubernetes cluster ready on AWS:
 
 6. Create a S3 Bucket to use as cluster storage
 
-7. Config the local environmental (name and bucket) on the EC2 Instance
+7. Config the environmental variables (name and bucket) on the EC2 Instance
 
 8. Create the cluster configuration
 
@@ -85,7 +85,7 @@ Follow the steps bellow to get your kubernetes cluster ready on AWS:
 
 10. Start the cluster
 
-11. Start the resources using ```kubectl apply``` on .yml files
+11. Start the resources using ```kubectl apply``` on .yml files from ```/example/prod```
 
 The steps **5, 7, 8, 9, 10, 11** are covered on [Getting Started - KOPS](https://github.com/kubernetes/kops/blob/master/docs/getting_started/aws.md#creating-your-first-cluster).
 
@@ -166,6 +166,8 @@ With a persistent volume we can keep the data safe on the needed folder while ma
 
 In order to make it scalable, we can create another file only to config the storage that will be used by the pod (Ex: [PodConfig](example/mongo-stack.yml) and [StorageConfig](example/storage.yml)).
 
+So, we can have a **Persistent Volume** config and a **Persistent Volume Claims** config for the given pod (Basically the first gives the default config for the persistent storage and the second makes a request to use a persistent storage based on the default config)
+
 <a name="how-to-get-into-ec2-instance"></a>
 
 ## How to get into EC2 Instance
@@ -177,39 +179,6 @@ ssh -i $KEY_PAIR_FILE_NAME.pem ec2-user@$EC2_INSTANCE_IP
 chmod go-rwx $KEY_PAIR_FILE_NAME.pem
 ```
 
-<a name="how-to-install-kops-on-ec2-instance"></a>
-
-## How to install KOPS on EC2 Instance
-```ssh
-curl -Lo kops https://github.com/kubernetes/kops/releases/download/$(curl -s https://api.github.com/repos/kubernetes/kops/releases/latest | grep tag_name | cut -d '"' -f 4)/kops-linux-amd64
-
-chmod +x ./kops
-
-sudo mv ./kops /usr/local/bin/
-```
-
-<a name="how-to-install-kubectl-on-ec2-instance"></a>
-
-## How to install KUBECTL on EC2 Instance
-```ssh
-curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
-
-chmod +x ./kubectl
-
-sudo mv ./kubectl /usr/local/bin/kubectl
-```
-
-<a name="permissions-kops-user-needs-from-aws"></a>
-
-## Permissions KOPS user needs from AWS
-```
-AmazonEC2FullAccess
-AmazonRoute53FullAccess
-AmazonS3FullAccess
-IAMFullAccess
-AmazonVPCFullAccess
-```
-
 <a name="using-nano-editor-with-kops"></a>
 
 ## Using nano editor with KOPS
@@ -217,6 +186,49 @@ AmazonVPCFullAccess
 echo $EDITOR
 export EDITOR=nano
 ```
+
+<a name="how-to-install-prometheus-and-grafana-on-ec2-instance"></a>
+
+## How to install Prometheus and Grafana on EC2 Instance
+1. Install [Helm](https://github.com/helm/helm) on the EC2 Instance
+
+2. Add permissions to Helm on the EC2 Instance
+```sh
+kubectl create serviceaccount --namespace kube-system tiller
+
+kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+
+kubectl patch deploy --namespace kube-system tiller-deploy -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}' 
+```
+
+3. Add the stable repository for helm
+```sh
+helm repo add stable https://kubernetes-charts.storage.googleapis.com
+
+helm repo update
+```
+
+4. Install Prometheus package
+```sh
+helm install monitoring stable/prometheus-operator
+```
+
+5. Change Grafana config
+```sh
+kubectl edit service/monitoring-grafana
+
+# Then change the 'Type: ClusterIP' to 'Type: LoadBalancer'
+```
+
+6. Open grafana
+```
+Go to the LoadBalancer URL that's related to Grafana and use the following credentials to log into Grafana:
+
+user: admin
+password: prom-operator
+```
+
+More helm charts for kubernetes can be found on [helm/charts](https://github.com/helm/charts) repository
 
 <a name="useful-commands"></a>
 
@@ -289,4 +301,9 @@ kops delete cluster --name ${NAME} --yes # Deletes the cluster
 kops edit cluster ${NAME} # Edits the default cluster configurations
 
 kops get ig --name ${NAME} # Shows the current configuration of cluster
+
+helm ls # Lists all helm installations
+
+helm delete --purge $INSTALLATION_NAME # Deletes helm installations
+# Ex: helm delete --purge mysql
 ```
