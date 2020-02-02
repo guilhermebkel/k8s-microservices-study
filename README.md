@@ -13,6 +13,7 @@ It is a shipping tracker, composed by:
 - Log Visualization ```(Kibana)```
 - Monitoring ```(Prometheus)```
 - Monitoring Visualization ```(Grafana)```
+- Alerts ```(AlertManager and Slack)```
 
 All the services/resources above run inside a kubernetes cluster.
 
@@ -32,6 +33,7 @@ All the files used to config the microservices system can be found inside the **
 - [ How to get into EC2 Instance ](#how-to-get-into-ec2-instance)
 - [ Using nano editor with KOPS ](#using-nano-editor-with-kops)
 - [ How to install Prometheus and Grafana on EC2 Instance ](#how-to-install-prometheus-and-grafana-on-ec2-instance)
+- [ How to use the AlertManager with Slack ](#how-to-use-the-alertmanager-with-slack)
 - [ Useful commands ](#useful-commands)
 
 <a name="how-to-run-locally"></a>
@@ -85,7 +87,7 @@ Follow the steps bellow to get your kubernetes cluster ready on AWS:
 
 10. Start the cluster
 
-11. Start the resources using ```kubectl apply``` on .yml files from ```/example/prod```
+11. Start the resources using ```kubectl apply``` on .yaml files from ```/example/prod```
 
 The steps **5, 7, 8, 9, 10, 11** are covered on [Getting Started - KOPS](https://github.com/kubernetes/kops/blob/master/docs/getting_started/aws.md#creating-your-first-cluster).
 
@@ -99,10 +101,10 @@ If we want to make this Pod to be visible on the internet, we need to use a Serv
 Example:
 ```sh
 # Pod that runs a Angular Application with the help of a pre-made docker image
-./webapp-pod.yml
+./webapp-pod.yaml
 
 # Service that exposes the Angular Application to internet
-./webapp-service.yml
+./webapp-service.yaml
 ```
 
 <a name="how-to-apply-changes"></a>
@@ -112,8 +114,8 @@ Example:
 kubectl apply -f $FILE_NAME
 
 # Examples
-# kubectl apply -f webapp-pod.yml
-# kubectl apply -f webapp-service.yml
+# kubectl apply -f webapp-pod.yaml
+# kubectl apply -f webapp-service.yaml
 ```
 
 <a name="how-to-see-status"></a>
@@ -164,7 +166,7 @@ If we create a pod that needs to save data (per example, a mongodb pod) we need 
 
 With a persistent volume we can keep the data safe on the needed folder while making sure it will not die if the pod dies.
 
-In order to make it scalable, we can create another file only to config the storage that will be used by the pod (Ex: [PodConfig](example/mongo-stack.yml) and [StorageConfig](example/storage.yml)).
+In order to make it scalable, we can create another file only to config the storage that will be used by the pod (Ex: [PodConfig](example/mongo-stack.yaml) and [StorageConfig](example/storage.yaml)).
 
 So, we can have a **Persistent Volume** config and a **Persistent Volume Claims** config for the given pod (Basically the first gives the default config for the persistent storage and the second makes a request to use a persistent storage based on the default config)
 
@@ -227,8 +229,37 @@ Go to the LoadBalancer URL that's related to Grafana and use the following crede
 user: admin
 password: prom-operator
 ```
-
 More helm charts for kubernetes can be found on [helm/charts](https://github.com/helm/charts) repository
+
+<a name="how-to-use-the-alertmanager-with-slack"></a>
+
+## How to use the AlertManager with Slack
+1. Get the pod name used by alertmanager (Ex: **prometheus-alertmanager**)
+
+2. Delete its secret
+```sh
+kubectl delete secret prometheus-alertmanager
+```
+
+3. Create a new secret with the needed options (Ex: [example/prod/alermanager.yaml](./example/prod/alertmanager.yaml))
+```sh
+kubectl create secret generic prometheus-alertmanager --from-file=alertmanager.yaml
+```
+
+<a name="useful-commands"></a>
+
+## Helping Prometheus to verify ETCD service is running
+Since the default gateway on AWS is configured such a way prometheus can not accesses ports 4001 and 4002, we need to add this ports manually with the help of the following steps:
+
+1. Go to ```Security Groups```
+
+2. Click on the **master node security group**
+
+3. Click on **Inbound**
+
+4. Click on **Edit**
+
+5. Change the port range of ```4003 - 65535``` to ```4001 - 65535```
 
 <a name="useful-commands"></a>
 
@@ -306,4 +337,6 @@ helm ls # Lists all helm installations
 
 helm delete --purge $INSTALLATION_NAME # Deletes helm installations
 # Ex: helm delete --purge mysql
+
+kubectl config view --minify # Shows set configs for the kubernetes
 ```
