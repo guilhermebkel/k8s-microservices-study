@@ -35,6 +35,8 @@ All the files used to config the microservices system can be found inside the **
 - [ How to install Prometheus and Grafana on EC2 Instance ](#how-to-install-prometheus-and-grafana-on-ec2-instance)
 - [ How to use the AlertManager with Slack ](#how-to-use-the-alertmanager-with-slack)
 - [ Helping Prometheus to verify ETCD service ](#helping-prometheus-to-verify-etcd-service)
+- [ How to Auto-scale Pods ](#how-to-autoscale-pods)
+- [ Readiness and Liveness Probe ](#readiness-and-liveness-probe)
 - [ Useful commands ](#useful-commands)
 
 <a name="how-to-run-locally"></a>
@@ -261,6 +263,30 @@ Since the default gateway on AWS is configured such a way prometheus can not acc
 4. Click on **Edit**
 
 5. Change the port range of ```4003 - 65535``` to ```4001 - 65535```
+
+<a name="how-to-autoscale-pods"></a>
+
+## How to Auto-scale Pods
+We're able to define some rules in order to automatically scale the pods when it gets a defined maximum use of **Memory, CPU, etc**.
+```sh
+kubectl autoscale deployment $DEPLOYMENT_NAME --cpu-percent 400 --min 1 --max 4
+```
+
+By doing it, the pods will scale up when above the expected cpu value, but, when it gets below the expected for some time (~10min) it will scale down automatically.
+
+In order to see the current **Horizontal Pod Autoscalling** we can use the following command:
+```sh
+kubectl get hpa
+```
+
+<a name="readiness-and-liveness-probe"></a>
+
+## Readiness and Liveness Probe
+When we increase the number of pod instances, after the new pods are up, and will need some seconds before being able to receive requests (what can give back a 502 response).
+
+To solve this problem, a approach we can take in order to solve this problem is adding a ```readinessProbe``` configuration to the **Pod .yaml**.
+
+By doing so, the requests will go only to the up pod till it gets the time you configured on ```readinessProbe```. After the new Pod has reached the configured amount of time up, it will be able to receive requests.
 
 <a name="useful-commands"></a>
 
