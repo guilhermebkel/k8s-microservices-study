@@ -282,7 +282,7 @@ kubectl get hpa
 <a name="readiness-and-liveness-probe"></a>
 
 ## Readiness and Liveness Probe
-When we increase the number of pod instances, after the new pods are up, and will need some seconds before being able to receive requests (what can give back a 502 response).
+When we increase the number of pod instances, after the new pods are up, they will need some seconds before being able to receive requests (what can give back a 502 response).
 
 To solve this problem, a approach we can take in order to solve this problem is adding a ```readinessProbe``` configuration to the **Pod .yaml**.
 
