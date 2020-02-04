@@ -37,6 +37,7 @@ All the files used to config the microservices system can be found inside the **
 - [ Helping Prometheus to verify ETCD service ](#helping-prometheus-to-verify-etcd-service)
 - [ How to Auto-scale Pods ](#how-to-autoscale-pods)
 - [ Readiness and Liveness Probe ](#readiness-and-liveness-probe)
+- [ Best Practices ](#best-practices)
 - [ Useful commands ](#useful-commands)
 
 <a name="how-to-run-locally"></a>
@@ -287,6 +288,13 @@ When we increase the number of pod instances, after the new pods are up, they wi
 To solve this problem, an approach we can take in order to solve this problem is adding a ```readinessProbe``` configuration to the **Pod .yaml**.
 
 By doing so, the requests will go only to the up pod till it gets the time you configured on ```readinessProbe```. After the new Pod has reached the configured amount of time up, it will be able to receive requests.
+
+<a name="best-practices"></a>
+
+## Best practices
+1. Scheduling **Memory Request** and **Memory Limit** for pods
+
+2. Scheduling **CPU Request** and **CPU Limit** for pods
 
 <a name="useful-commands"></a>
 
