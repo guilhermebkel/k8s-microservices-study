@@ -308,9 +308,9 @@ By doing so, the requests will go only to the up pod till it gets the time you c
 
 3. In order to use these global variables on another resources, we'll have to do the following to their .yaml config file on the env section:
 ```yml
-	envFrom:
-	- configMapRef:
-			name: global-database-config
+  envFrom:
+  - configMapRef:
+      name: global-database-config
 ```
 
 Now the resource with the config above will have access to **DATABASE_URL** and **DATABASE_PASSWORD** variables.
