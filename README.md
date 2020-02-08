@@ -38,6 +38,7 @@ All the files used to config the microservices system can be found inside the **
 - [ How to Auto-scale Pods ](#how-to-autoscale-pods)
 - [ Readiness and Liveness Probe ](#readiness-and-liveness-probe)
 - [ Best Practices ](#best-practices)
+- [ Setting up ConfigMaps as Environmental Variables ](#setting-up-config-maps-as-environmental-variables)
 - [ Useful commands ](#useful-commands)
 
 <a name="how-to-run-locally"></a>
@@ -295,6 +296,24 @@ By doing so, the requests will go only to the up pod till it gets the time you c
 1. Scheduling **Memory Request** and **Memory Limit** for pods
 
 2. Scheduling **CPU Request** and **CPU Limit** for pods
+
+3. Creating ConfigMaps to help with environmental variables management
+
+<a name="setting-up-config-maps-as-environmental-variables"></a>
+
+## Setting up ConfigMaps as Environmental Variables
+1. Create a **ConfigMap** following the example file ([database-config.yaml](./database-config.yaml))
+
+2. Then, after setting up the configMap following the example above, we'll be able to access two variables globally: **DATABASE_URL** and **DATABASE_PASSWORD**
+
+3. In order to use these global variables on another resources, we'll have to do the following to their .yaml config file on the env section:
+```yml
+	envFrom:
+	- configMapRef:
+			name: global-database-config
+```
+
+Now the resource with the config above will have access to **DATABASE_URL** and **DATABASE_PASSWORD** variables.
 
 <a name="useful-commands"></a>
 
