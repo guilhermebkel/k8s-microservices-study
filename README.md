@@ -15,6 +15,7 @@ It is a shipping tracker, composed by:
 - Monitoring Visualization ```(Grafana)```
 - Alerts ```(AlertManager and Slack)```
 - Ingress Controller ```(Nginx)```
+- CI/CD ```(Jenkins)```
 
 All the services/resources above run inside a kubernetes cluster.
 
@@ -42,6 +43,7 @@ All the files used to config the microservices system can be found inside the **
 - [ Best Practices ](#best-practices)
 - [ Setting up ConfigMaps as Environmental Variables ](#setting-up-config-maps-as-environmental-variables)
 - [ What is a DaemonSet ](#what-is-a-daemonset)
+- [ Setting up CI/CI to Kubernetes Cluster ](#setting-up-ci-cd-to-kubernetes-cluster)
 - [ Useful commands ](#useful-commands)
 
 <a name="how-to-run-locally"></a>
@@ -354,6 +356,21 @@ Now the resource with the config above will have access to **DATABASE_URL** and 
 A DaemonSet basically ensures that all nodes on the cluster run a copy of a specified pod.
 
 For example, it is used when we need to add a log service on the cluster and it need a logging app to be running inside every node (ex: **Fluentd**)
+
+<a name="setting-up-ci-cd-to-kubernetes-cluster"></a>
+
+## Setting up CI/CI to Kubernetes Cluster
+
+1. Install **Jenkins**
+```sh
+# Get the Dockerfile and jenkins.yaml from ./example/prod and run
+docker image build -t myjenkins .
+kubectl apply -f jenkins.yaml
+```
+
+2. Add the repository to a new project on **Jenkins**
+
+3. Add a **Jenkinsfile** to that repository in order to describe to **Jenkins** how to build the project (Example of Jenkinsfile for the API Gateway on [/example/prod/Jenkinsfile](./example/prod/Jenkinsfile))
 
 <a name="useful-commands"></a>
 
