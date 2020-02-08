@@ -14,6 +14,7 @@ It is a shipping tracker, composed by:
 - Monitoring ```(Prometheus)```
 - Monitoring Visualization ```(Grafana)```
 - Alerts ```(AlertManager and Slack)```
+- Ingress Controller ```(Nginx)```
 
 All the services/resources above run inside a kubernetes cluster.
 
@@ -33,6 +34,7 @@ All the files used to config the microservices system can be found inside the **
 - [ How to get into EC2 Instance ](#how-to-get-into-ec2-instance)
 - [ Using nano editor with KOPS ](#using-nano-editor-with-kops)
 - [ How to install Prometheus and Grafana on EC2 Instance ](#how-to-install-prometheus-and-grafana-on-ec2-instance)
+- [ How to config Ingress Controllers on Kubernetes Cluster ](#how-to-config-ingress-controllers-on-kubernetes-cluster)
 - [ How to use the AlertManager with Slack ](#how-to-use-the-alertmanager-with-slack)
 - [ Helping Prometheus to verify ETCD service ](#helping-prometheus-to-verify-etcd-service)
 - [ How to Auto-scale Pods ](#how-to-autoscale-pods)
@@ -235,6 +237,35 @@ user: admin
 password: prom-operator
 ```
 More helm charts for kubernetes can be found on [helm/charts](https://github.com/helm/charts) repository
+
+<a name="how-to-config-ingress-controllers-on-kubernetes-cluster"></a>
+
+## How to config Ingress Controllers on Kubernetes Cluster
+When the system scales up, it turns to be painful to have multiple load balancers for lots of resources, so, in order to solve this problem we can use a **Ingress Controller**.
+
+A **Ingress Controller** is basically a **Nginx** service that will route every request of a single Load Balancer to a specified resource on the kubernetes cluster.
+
+So, in order to deploy a Ingress Controller to AWS, do the following:
+
+1. Install the service using the example on [example/prod/ingress-mandatory.yaml](./example/prod/ingress-mandatory.yaml)
+```sh
+kubectl apply -f ingress-mandatory.yaml
+```
+
+2. Install Layer 4 config for Load Balancer using the example on [example/prod/ingress-service-l4.yaml](./example/prod/ingress-service-l4.yaml) and [example/prod/ingress-configmap-l4.yaml](./example/prod/ingress-configmap-l4.yaml)
+```sh
+kubectl apply -f ingress-service-l4.yaml
+kubectl apply -f ingress-configmap-l4.yaml
+```
+
+3. Setup the config file for the ingress controller using the example on [example/prod/ingress.yaml](./example/prod/ingress.yaml)
+```sh
+kubectl apply -f ingress.yaml
+```
+
+4. Point the necessary subdomains (that you configured on ingress.yaml) to the Load Balancer Url using **A Records**.
+
+All the raw tutorial can be found on [Kubernetes - Ingress Nginx Deploy](https://kubernetes.github.io/ingress-nginx/deploy/).
 
 <a name="how-to-use-the-alertmanager-with-slack"></a>
 

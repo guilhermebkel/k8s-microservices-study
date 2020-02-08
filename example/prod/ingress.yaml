@@ -1,0 +1,11 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+spec:
+	rules:
+		- host: guilherr.me
+			http:
+				paths:
+					- path: /
+						backend:
+							serviceName: fleetman-webapp
+              servicePort: 80
