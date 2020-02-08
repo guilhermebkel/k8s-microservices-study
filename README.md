@@ -41,6 +41,7 @@ All the files used to config the microservices system can be found inside the **
 - [ Readiness and Liveness Probe ](#readiness-and-liveness-probe)
 - [ Best Practices ](#best-practices)
 - [ Setting up ConfigMaps as Environmental Variables ](#setting-up-config-maps-as-environmental-variables)
+- [ What is a DaemonSet ](#what-is-a-daemonset)
 - [ Useful commands ](#useful-commands)
 
 <a name="how-to-run-locally"></a>
@@ -345,6 +346,14 @@ By doing so, the requests will go only to the up pod till it gets the time you c
 ```
 
 Now the resource with the config above will have access to **DATABASE_URL** and **DATABASE_PASSWORD** variables.
+
+<a name="what-is-a-daemonset"></a>
+
+## What is a DaemonSet
+
+A DaemonSet basically ensures that all nodes on the cluster run a copy of a specified pod.
+
+For example, it is used when we need to add a log service on the cluster and it need a logging app to be running inside every node (ex: **Fluentd**)
 
 <a name="useful-commands"></a>
 
