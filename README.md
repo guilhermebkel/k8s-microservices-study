@@ -386,7 +386,7 @@ minikube stop # Stops minikube
 
 docker ps # Show running containers
 
-docker ps # Show running containers
+docker run -it IMAGE_NAME sh # Open shell inside container
 
 docker container stop $CONTAINER_ID # Stop given container by id
 # Ex: docker container stop 23kda2135
