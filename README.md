@@ -1,4 +1,4 @@
-# k8s-microservices
+# k8s-microservices-study
 A simple example of a microservices architecture using kubernetes.
 
 It is a shipping tracker, composed by:
